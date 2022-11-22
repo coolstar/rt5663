@@ -1,0 +1,78 @@
+;/*++
+;
+;Copyright (c) CoolStar.  All rights reserved.
+;
+;Module Name:
+;    coolstar.inf
+;
+;Abstract:
+;    INF file for installing the RT5663 Jack Detect Driver 
+;
+;
+;--*/
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Media
+ClassGuid   = {4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider    = CoolStar
+DriverVer   = 12/16/2021,1.0.0
+CatalogFile = rt5663.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+rt5663.sys  = 1,,
+
+;*****************************************
+; rt5663  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NTAMD64
+
+; Decorated model section take precedence over undecorated 
+; ones on XP and later.
+[Standard.NTAMD64]
+%rt5663.DeviceDesc%=Rt5663_Device, ACPI\10EC5663
+
+[Rt5663_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Rt5663_Device.NT.HW]
+AddReg=Rt5663_AddReg
+
+[Drivers_Dir]
+rt5663.sys
+
+[Rt5663_AddReg]
+; Set to 1 to connect the first interrupt resource found, 0 to leave disconnected
+HKR,Settings,"ConnectInterrupt",0x00010001,0
+HKR,,"UpperFilters",0x00010000,"mshidkmdf"
+
+;-------------- Service installation
+[Rt5663_Device.NT.Services]
+AddService = rt5663,%SPSVCINST_ASSOCSERVICE%, Rt5663_Service_Inst
+
+; -------------- rt5663 driver install sections
+[Rt5663_Service_Inst]
+DisplayName    = %rt5663.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\rt5663.sys
+LoadOrderGroup = Base
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+StdMfg                 = "CoolStar"
+DiskId1                = "ALC5663 Installation Disk #1"
+rt5663.DeviceDesc = "Realtek ALC5663 I2S Audio"
+rt5663.SVCDESC    = "ALC5663 Service"
