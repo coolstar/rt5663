@@ -1658,6 +1658,17 @@ Rt5663WriteReport(
 
 			switch (transferPacket->reportId)
 			{
+			case REPORTID_SPECKEYS:
+				status = STATUS_SUCCESS;
+
+				CsAudioSpecialKeyReport report;
+				report.ReportID = REPORTID_SPECKEYS;
+				report.ControlCode = CONTROL_CODE_JACK_TYPE;
+				report.ControlValue = DevContext->JackType;
+
+				size_t bytesWritten;
+				RtekProcessVendorReport(DevContext, &report, sizeof(report), &bytesWritten);
+				break;
 			default:
 
 				RtekPrint(DEBUG_LEVEL_ERROR, DBG_IOCTL,
