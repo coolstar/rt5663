@@ -1667,7 +1667,7 @@ Rt5663WriteReport(
 				report.ControlValue = DevContext->JackType;
 
 				size_t bytesWritten;
-				RtekProcessVendorReport(DevContext, &report, sizeof(report), &bytesWritten);
+				Rt5663ProcessVendorReport(DevContext, &report, sizeof(report), &bytesWritten);
 				break;
 			default:
 
