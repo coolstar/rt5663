@@ -1021,7 +1021,13 @@ RtekJdetWorkItem(
 	WDFDEVICE Device = (WDFDEVICE)WdfWorkItemGetParentObject(WorkItem);
 	PRTEK_CONTEXT pDevice = GetDeviceContext(Device);
 
+	WdfInterruptAcquireLock(pDevice->Interrupt);
+
 	rt5663_jackdetect(pDevice);
+
+	WdfInterruptReleaseLock(pDevice->Interrupt);
+
+	WdfObjectDelete(WorkItem);
 }
 
 BOOLEAN OnInterruptIsr(
